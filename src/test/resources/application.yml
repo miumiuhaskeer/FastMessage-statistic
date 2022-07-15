@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=true
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        enable_lazy_load_no_trans: true
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+
+    hibernate:
+      ddl-auto: none
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fast-message-statistic
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: com.miumiuhaskeer.fastmessage.model.kafka
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+        max.block.ms: 1000
+        enable.idempotence: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
+
+fastmesssage:
+  jwt:
+    token:
+      fms-secret: FastMessageStatisticSecret
+      fms-expiration-seconds: 3600
+  elasticsearch:
+    host: localhost
+    port: 9292
+    headers:
+      accept: application/vnd.elasticsearch+json;compatible-with=7
+      content-type: application/vnd.elasticsearch+json;compatible-with=7

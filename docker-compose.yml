@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+  app:
+    container_name: fast-message-statistic
+    image: 'heybitbro/fast-message-statistic'
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    build:
+      context: ./
+      dockerfile: docker/fast-message-statistic/Dockerfile
+    ports:
+      - "3173:3174"
+    networks:
+      - fms-network
+    depends_on:
+      - fast-message-elasticsearch-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://fast-message-db:5432/fastmessage
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+
+  fast-message-elasticsearch-db:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.4'
+    container_name: fast-message-elasticsearch-db
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      fms-network:
+        aliases:
+          - fast-message-elasticsearch-db
+          - elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - cluster.name=fms-docker-cluster
+      - bootstrap.memory_lock=true
+      - listeners=PLAINTEXT://fast-message-elasticsearch-db:9092
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+
+  fast-message-kibana:
+    image: 'kibana:7.17.4'
+    container_name: fast-message-kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - fms-network
+    depends_on:
+      - fast-message-elasticsearch-db
+    environment:
+      - ELASTICSEARCH_HOSTS=http://fast-message-elasticsearch-db:9200
+
+  fast-message-logstash:
+    image: 'logstash:7.17.4'
+    container_name: fast-message-logstash
+    ports:
+      - "5046:5046"
+    networks:
+      - fms-network
+    depends_on:
+      - fast-message-elasticsearch-db
+#    environment:
+#      - XPACK_MONITORING_ENABLED=false
+    volumes:
+      - ./docker/fast-message-logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./docker/fast-message-logstash/pipeline:/usr/share/logstash/config/pipeline:ro
+
+      - ./docker/fast-message-logstash/driver/bson-4.5.1.jar/:/usr/share/logstash/logstash-core/lib/jars/bson-4.5.1.jar/:ro
+      - ./docker/fast-message-logstash/driver/graal-sdk-22.0.0.2.jar/:/usr/share/logstash/logstash-core/lib/jars/graal-sdk-22.0.0.2.jar/:ro
+      - ./docker/fast-message-logstash/driver/gson-2.8.9.jar/:/usr/share/logstash/logstash-core/lib/jars/gson-2.8.9.jar/:ro
+      - ./docker/fast-message-logstash/driver/js-22.0.0.2.jar/:/usr/share/logstash/logstash-core/lib/jars/js-22.0.0.2.jar/:ro
+      - ./docker/fast-message-logstash/driver/js-scriptengine-22.0.0.2.jar/:/usr/share/logstash/logstash-core/lib/jars/js-scriptengine-22.0.0.2.jar/:ro
+      - ./docker/fast-message-logstash/driver/mongodb-driver-core-4.5.1.jar/:/usr/share/logstash/logstash-core/lib/jars/mongodb-driver-core-4.5.1.jar/:ro
+      - ./docker/fast-message-logstash/driver/mongodb-driver-sync-4.5.1.jar/:/usr/share/logstash/logstash-core/lib/jars/mongodb-driver-sync-4.5.1.jar/:ro
+      - ./docker/fast-message-logstash/driver/mongojdbc4.1.jar/:/usr/share/logstash/logstash-core/lib/jars/mongojdbc4.1.jar/:ro
+      - ./docker/fast-message-logstash/driver/regex-22.0.0.2.jar/:/usr/share/logstash/logstash-core/lib/jars/regex-22.0.0.2.jar/:ro
+      - ./docker/fast-message-logstash/driver/truffle-api-22.0.0.2.jar/:/usr/share/logstash/logstash-core/lib/jars/truffle-api-22.0.0.2.jar/:ro
+#      - ./docker/fast-message-logstash/driver:/usr/share/logstash/logstash-core/lib/jars/driver:ro
+#      - ./docker/fast-message-logstash/driver/bson-3.0.4.jar/:/usr/share/logstash/logstash-core/lib/jars/bson-3.0.4.jar/:ro
+#      - ./docker/fast-message-logstash/driver/mongojdbc4.1.jar/:/usr/share/logstash/logstash-core/lib/jars/mongojdbc4.1.jar/:ro
+    environment:
+      - ELASTIC_HOST=http://fast-message-elasticsearch-db:9200
+      - ELASTICSEARCH_HOSTS=http://fast-message-elasticsearch-db:9200
+#      - monitoring.elasticsearch.hosts=http://fast-message-elasticsearch-db:9200
+
+networks:
+  fms-network:
+    name: fms-network
+    external:
+      name: fm-network

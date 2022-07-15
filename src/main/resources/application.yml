@@ -1,0 +1,42 @@
+server:
+  port: 3174
+  servlet:
+    context-path: /fms/api/v1
+
+spring:
+  datasource:
+    url: jdbc:postgresql://fast-message-db:5432/fastmessage?useUnicode=true&characterEncoding=UTF-8
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        enable_lazy_load_no_trans: true
+
+  kafka:
+    consumer:
+      group-id: fast-message-statistic
+      bootstrap-servers: fast-message-kafka:9092
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.miumiuhaskeer.fastmessage.model.kafka
+
+logging:
+  level:
+    tracer: trace
+
+fastmesssage:
+  jwt:
+    token:
+      fms-secret: FastMessageStatisticSecret
+      fms-expiration-seconds: 30
+  elasticsearch:
+    host: fast-message-elasticsearch-db
+    port: 9200
+    headers:
+      accept: application/vnd.elasticsearch+json;compatible-with=7
+      content-type: application/vnd.elasticsearch+json;compatible-with=7
