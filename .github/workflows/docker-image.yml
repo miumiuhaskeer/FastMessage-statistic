@@ -30,10 +30,12 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
+    - name: Compile Kotlin
+      run: mvn kotlin:compile
+    - name: Compile Java
+      run: mvn compile
     - name: Run tests with Maven
-      run: |
-        mvn kotlin:compile compile
-        mvn package
+      run: mvn package
     - name: Login to DockerHub
       if: GitHub.event_name != 'pull_request'
       uses: docker/login-action@v2.0.0
