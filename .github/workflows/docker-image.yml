@@ -30,14 +30,6 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Compile Java
-      run: mvn compile
-    - name: Compile Kotlin
-      run: mvn kotlin:compile
-    - name: Test compile Java
-      run: mvn test-compile
-    - name: Test compile Kotlin
-      run: mvn kotlin:test-compile
     - name: Run tests with Maven
       run: mvn package
     - name: Login to DockerHub
