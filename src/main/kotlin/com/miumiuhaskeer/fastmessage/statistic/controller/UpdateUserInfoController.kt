@@ -15,19 +15,16 @@ class UpdateUserInfoController(
 
     @KafkaListener(topics = ["updateUserInfoChatCount"])
     fun updateChatCount(record: ConsumerRecord<Long, Int>) {
-        //record.validateValueCount()
         userInfoService.addNewChatCount(record.key(), record.value())
     }
 
     @KafkaListener(topics = ["updateUserInfoMessageCount"])
     fun updateMessageCount(record: ConsumerRecord<Long, Int>) {
-        //record.validateValueCount()
         userInfoService.addNewMessageCount(record.key(), record.value())
     }
 
     @KafkaListener(topics = ["createUserInfo"])
     fun createUserInfo(record: ConsumerRecord<Long, UserInfoKafka>) {
-        //record.validateUserInfo()
         userInfoService.create(record.key(), record.value())
     }
 }
