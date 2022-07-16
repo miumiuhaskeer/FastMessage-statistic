@@ -4,6 +4,6 @@ object ErrorBundle {
 
     private val bundle = SimpleBundle("static/error")
 
-    fun get(key: String) = bundle[key]
+    operator fun get(key: String) = bundle[key]
     fun getFromText(text: String) = bundle.getFromText(text)
 }

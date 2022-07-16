@@ -59,7 +59,7 @@ class UserInfoServiceImpl(
         val result = userInfoRepository.findByUserId(userId)
 
         if (!result.isPresent) {
-            throw EntityNotFoundException(ErrorBundle.get("error.entityNotFoundException.user.message"));
+            throw EntityNotFoundException(ErrorBundle["error.entityNotFoundException.user.message"]);
         }
 
         return result.get()

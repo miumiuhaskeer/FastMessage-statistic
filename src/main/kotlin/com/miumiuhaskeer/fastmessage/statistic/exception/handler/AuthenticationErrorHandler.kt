@@ -21,7 +21,7 @@ class AuthenticationErrorHandler(
     ) {
         val simpleResponse = ResponseEntityBuilder.SimpleResponse(
             HttpStatus.UNAUTHORIZED.value(),
-            ErrorBundle.get("error.authenticationError.message")
+            ErrorBundle["error.authenticationError.message"]
         )
 
         response.apply {

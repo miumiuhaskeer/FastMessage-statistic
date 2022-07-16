@@ -68,7 +68,7 @@ class JWTokenFilter(
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
 
         if (!jwTokenUtil.headerIsToken(header)) {
-            throw ParseException(ErrorBundle.get("error.parseException.token.bearer.message"), 0)
+            throw ParseException(ErrorBundle["error.parseException.token.bearer.message"], 0)
         }
 
         return jwTokenUtil.getTokenFromHeader(header)
