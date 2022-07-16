@@ -20,9 +20,6 @@ class CustomMessageSearchRepositoryImpl(
     private val elasticsearchOperations: ElasticsearchOperations
 ): CustomMessageSearchRepository {
 
-    /**
-     * Find messages by filter
-     */
     override fun findByFilter(filter: FindMessagesRequest): List<Message> {
         val criteria: Criteria = Criteria()
             .andFieldIs("document.chatId", filter.chatId)
