@@ -35,7 +35,6 @@ class CustomMessageSearchRepositoryImpl(
             searchQuery, MongoMessage::class.java, IndexCoordinates.of(MongoMessage.DOCUMENT_NAME)
         )
 
-        // TODO change logic for return statement
-        return messages.searchHits.map { it.content.document ?: Message() }
+        return messages.searchHits.mapNotNull { it.content.document }
     }
 }
