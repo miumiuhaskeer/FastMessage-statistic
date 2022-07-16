@@ -1,5 +1,6 @@
 package com.miumiuhaskeer.fastmessage.statistic.model.request
 
+import com.miumiuhaskeer.fastmessage.statistic.util.LocalDateTimeUtil
 import lombok.AllArgsConstructor
 import lombok.NoArgsConstructor
 import org.springframework.data.elasticsearch.annotations.Field
@@ -16,10 +17,10 @@ class FindMessagesRequest {
     var fromId: Long? = null
     var content: String? = null
 
-    @Field(type = FieldType.Date, format = [], pattern = ["uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"])
+    @Field(type = FieldType.Date, format = [], pattern = [LocalDateTimeUtil.ZONED_TO_LOCAL_PATTERN])
     var sendTimeStart: LocalDateTime? = null
 
-    @Field(type = FieldType.Date, format = [], pattern = ["uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"])
+    @Field(type = FieldType.Date, format = [], pattern = [LocalDateTimeUtil.ZONED_TO_LOCAL_PATTERN])
     var sendTimeEnd: LocalDateTime? = null
 
     @NotNull
