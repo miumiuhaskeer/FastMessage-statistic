@@ -4,8 +4,8 @@ import org.springframework.security.core.userdetails.UserDetails
 
 abstract class ExtendedUserDetails: UserDetails {
 
-    abstract fun getId(): Long?
-    abstract fun getEmail(): String?
+    abstract val id: Long?
+    abstract val email: String?
 
-    override fun getUsername() = getEmail()
+    override fun getUsername() = email
 }
