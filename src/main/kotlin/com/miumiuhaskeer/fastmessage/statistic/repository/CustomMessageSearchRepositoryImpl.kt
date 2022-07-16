@@ -14,8 +14,6 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter
 import org.springframework.data.elasticsearch.core.query.Query
 import org.springframework.stereotype.Repository
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Repository
 class CustomMessageSearchRepositoryImpl(

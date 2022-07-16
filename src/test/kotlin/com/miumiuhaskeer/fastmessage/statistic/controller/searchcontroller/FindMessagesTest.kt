@@ -1,17 +1,14 @@
 package com.miumiuhaskeer.fastmessage.statistic.controller.searchcontroller
 
 import com.miumiuhaskeer.fastmessage.statistic.AbstractTest
+import com.miumiuhaskeer.fastmessage.statistic.MockMvcQuery
 import com.miumiuhaskeer.fastmessage.statistic.model.entity.Message
 import com.miumiuhaskeer.fastmessage.statistic.model.entity.MongoMessage
 import com.miumiuhaskeer.fastmessage.statistic.model.request.FindMessagesRequest
 import com.miumiuhaskeer.fastmessage.statistic.model.response.FindMessagesResponse
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.testcontainers.shaded.com.google.common.net.HttpHeaders
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
@@ -22,7 +19,16 @@ class FindMessagesTest: AbstractTest() {
         const val MESSAGE = "Hello World!"
     }
 
+    private lateinit var query: MockMvcQuery
     private val userId = AtomicLong(0)
+
+    @BeforeEach
+    fun setMockMvcQuery() {
+        query = MockMvcQuery.createPostQuery(
+            "/find/messages",
+            adminHeader
+        )
+    }
 
     @Test
     fun simpleTest() {
@@ -128,8 +134,7 @@ class FindMessagesTest: AbstractTest() {
             page = -1
         }
 
-        mockMvc.perform(getRequest(request))
-            .andExpect(status().isBadRequest)
+        performBadRequest(query, request)
     }
 
     @Test
@@ -140,29 +145,16 @@ class FindMessagesTest: AbstractTest() {
             size = -1
         }
 
-        mockMvc.perform(getRequest(request))
-            .andExpect(status().isBadRequest)
+        performBadRequest(query, request)
     }
 
-    private fun performOkRequest(request: FindMessagesRequest): FindMessagesResponse {
-        val mvcResult = mockMvc.perform(getRequest(request))
-            .andExpect(status().isOk)
-            .andReturn()
-        val contentResult = mvcResult.response.contentAsString
-
-        return jsonConverter.fromJson(contentResult, FindMessagesResponse::class.java)
+    @Test
+    fun unauthorizedTest() {
+        createMessage()
+        performUnauthorizedRequest(query.apply { authToken = null }, FindMessagesRequest())
     }
 
-    private fun getRequest(request: FindMessagesRequest, containsAuthHeader: Boolean = true): MockHttpServletRequestBuilder {
-        val builder = post("/find/messages")
-
-        if (containsAuthHeader) {
-            builder.header(HttpHeaders.AUTHORIZATION, adminHeader)
-        }
-
-        return builder.contentType(MediaType.APPLICATION_JSON)
-            .content(jsonConverter.toJsonSafe(request))
-    }
+    private fun performOkRequest(request: FindMessagesRequest) = performOkRequest(query, request, FindMessagesResponse::class.java)
 
     private fun createMessage() {
         val mongoMessage = MongoMessage().apply {

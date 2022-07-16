@@ -15,7 +15,6 @@ import javax.validation.ConstraintViolationException
 class GlobalExceptionHandler {
 
     @ExceptionHandler(value = [
-        AuthenticationFailedException::class,
         IllegalArgumentException::class,
         EntityNotFoundException::class,
         UsernameNotFoundException::class,
@@ -27,6 +26,18 @@ class GlobalExceptionHandler {
 
         return ResponseEntityBuilder()
             .status(HttpStatus.BAD_REQUEST)
+            .message(e.message)
+            .create()
+    }
+
+    @ExceptionHandler(value = [
+        AuthenticationFailedException::class
+    ])
+    fun handleAuthenticationFailedException(e: AuthenticationFailedException): ResponseEntity<ResponseEntityBuilder.SimpleResponse> {
+        e.printStackTrace()
+
+        return ResponseEntityBuilder()
+            .status(HttpStatus.UNAUTHORIZED)
             .message(e.message)
             .create()
     }

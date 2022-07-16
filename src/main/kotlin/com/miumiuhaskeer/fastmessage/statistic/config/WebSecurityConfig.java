@@ -1,5 +1,6 @@
 package com.miumiuhaskeer.fastmessage.statistic.config;
 
+import com.miumiuhaskeer.fastmessage.statistic.JsonConverter;
 import com.miumiuhaskeer.fastmessage.statistic.config.filter.JWTokenFilter;
 import com.miumiuhaskeer.fastmessage.statistic.exception.handler.AuthenticationErrorHandler;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTokenFilter jwTokenFilter;
+    private final JsonConverter jsonConverter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -75,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new AuthenticationErrorHandler();
+        return new AuthenticationErrorHandler(jsonConverter);
     }
 
     @Bean
