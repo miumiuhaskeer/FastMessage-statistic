@@ -2,7 +2,7 @@ package com.miumiuhaskeer.fastmessage.statistic.model.entity
 
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
-import java.util.HashSet
+import java.util.*
 import javax.persistence.*
 
 @Entity
