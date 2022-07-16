@@ -15,8 +15,6 @@ class UserDetailsImpl(
 
     companion object {
 
-        // TODO remove after migrating to Kotlin
-        @JvmStatic
         fun from(user: User): UserDetailsImpl {
             val authorities: List<GrantedAuthority> = user.roles.stream().map {
                     SimpleGrantedAuthority(it.name!!.name)
