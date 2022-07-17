@@ -9,6 +9,9 @@ Note: project under development!
 - [x] Search messages
 - [ ] Chats statistic
 
+## Services architecture
+![Architecture](https://github.com/miumiuhaskeer/FastMessage-statistic/blob/master/.github/images/Diagram.jpg)
+
 ## Technologies used
 - Spring Boot
 - Docker - used bridge network driver
